@@ -13,5 +13,5 @@ func main() {
 
 	fmt.Printf("s data: %v\n",s[:10])
 	fmt.Printf("s1 cap:%d ,s2 cap:%d \n ",cap(s1),cap(s2))
-	
+
 }
