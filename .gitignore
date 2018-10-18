@@ -2,4 +2,8 @@
 .idea/*
 */.idea
 */.idea/*
+src
+src/*
+./src
+./src/*
 
