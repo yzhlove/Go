@@ -6,4 +6,6 @@ src
 src/*
 ./src
 ./src/*
-
+cellnet
+./cellnet
+./cellnet/*
