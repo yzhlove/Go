@@ -9,3 +9,6 @@ src/*
 cellnet
 ./cellnet
 ./cellnet/*
+gotop
+./gotop
+./gotop/*
