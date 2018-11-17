@@ -1,15 +1,5 @@
 .idea
 .idea/*
-*/.idea
-*/.idea/*
-src
-src/*
-./src
-./src/*
 cellnet
-./cellnet
-./cellnet/*
 gotop
-./gotop
-./gotop/*
 code
