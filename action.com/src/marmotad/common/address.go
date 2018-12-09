@@ -36,5 +36,5 @@ func GetCode() string {
 
 //GetLoginAddr 获取登陆地址
 func GetLoginAddr(requestURL string) string {
-	return fmt.Sprintf("%s/game/hame_histories/detail", requestURL)
+	return fmt.Sprintf("%s/game/game_histories/detail", requestURL)
 }

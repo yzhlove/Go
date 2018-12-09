@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"os"
 
+	_ "github.com/davyxu/cellnet/codec/json"
+	_ "github.com/davyxu/cellnet/peer/gorillaws"
+	_ "github.com/davyxu/cellnet/proc/gorillaws"
+
 	"marmotad/api"
 	"marmotad/common"
 
@@ -32,7 +36,7 @@ func init() {
 	flag.Parse()
 
 	check := true
-	for _, m := range common.RunModeList {
+	for _, m := range common.RunMode {
 		if mode == m {
 			check = false
 		}
@@ -48,7 +52,7 @@ func init() {
 func main() {
 
 	queue := cellnet.NewEventQueue()
-	p := peer.NewGenericPeer("gorillaws.Acceptor", "server", fmt.Sprintf("http://%s:%s/", host, port), nil)
+	p := peer.NewGenericPeer("gorillaws.Acceptor", "server", fmt.Sprintf("http://%s:%s/", host, port), queue)
 	proc.BindProcessorHandler(p, "gorillaws.ltv", api.Handle)
 	p.Start()
 	queue.StartLoop()

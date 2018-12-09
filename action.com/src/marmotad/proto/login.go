@@ -24,4 +24,5 @@ func init() {
 		Type:  reflect.TypeOf((*LOGIN)(nil)).Elem(),
 		ID:    int(util.StringHash("proto.LOGIN")),
 	})
+
 }

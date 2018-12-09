@@ -27,7 +27,7 @@ type remoteUser struct {
 	IsDiamond   int    `json:"scene_type"`
 	Users       []struct {
 		ID     int    `json:"id"`
-		UID    int    `json:"uid"`
+		UID    string `json:"uid"`
 		SID    string `json:"sid"`
 		SEX    int    `json:"sex"`
 		Avatar string `json:"avatar_small_url"`
@@ -47,6 +47,7 @@ func (client *Client) Login(msg *proto.LOGIN) bool {
 	if !ok {
 		return false
 	}
+	fmt.Printf("retUser:%v \n", retUser)
 	if retUser.ErrorCode != 0 {
 		log.Errorln("error_reason:" + retUser.ErrorReason)
 		return false
@@ -67,11 +68,57 @@ func (client *Client) Login(msg *proto.LOGIN) bool {
 			user.SEX = u.SEX
 			user.UID = u.UID
 			user.Name = u.Name
-		} else if u.AI == 2 {
 
+			userListMutex.Lock()
+			if _, ok := UserList[u.UID]; ok {
+				if cid, ok := UserClient[u.UID]; ok {
+					if client, ok := ClientList[cid]; ok {
+						ack := new(proto.ACK)
+						ack.ErrorCode = 10003
+						ack.ErrorReason = "账号异地登陆"
+
+						client.Session.Send(ack)
+						client.Session.Close()
+
+						//删除客户端列表
+						clientListMutex.Lock()
+						delete(ClientList, cid)
+						clientListMutex.Unlock()
+					}
+				}
+			}
+			UserClient[u.UID] = client.Session.ID()
+			UserList[u.UID] = user
+			client.UID = u.UID
+			userListMutex.Unlock()
+		} else if u.AI == 2 {
+			aiUser := new(User)
+			aiUser.AUID = u.UID
+			aiUser.AI = u.AI
+			aiUser.Avatar = u.Avatar
+			aiUser.SEX = u.SEX
+			aiUser.UID = u.UID
+			aiUser.Name = u.Name
+			aiUser.RID = fmt.Sprintf("%d", retUser.RoomID)
+			aiUser.SID = u.SID
+			aiUser.Ready = false
+			aiUser.IsDiamond = retUser.IsDiamond
+			aiUser.Addr = msg.ADDR
+			aiUser.App = retUser.Code
+			//将AI用户加入用户列表
+			userListMutex.Lock()
+			UserList[u.UID] = aiUser
+			client.UID = u.UID
+			userListMutex.Unlock()
 		}
 	}
-
+	//查找当前用户
+	if utp, ok := UserList[client.UID]; !ok || utp.UID == "" {
+		return false
+	}
+	if retUser.RoomID == 0 {
+		return false
+	}
 	return true
 }
 
@@ -79,35 +126,41 @@ func getLoginAddrString(msg *proto.LOGIN) (string, bool) {
 
 	ts := fmt.Sprintf("%d", time.Now().Unix())
 
-	signal := make(map[string]string)
-	signal["sid"] = msg.SID
-	signal["code"] = msg.CODE
-	signal["id"] = msg.GameHistoryID
-	signal["ts"] = ts
+	signal := map[string]string{
+		"sid":  msg.SID,
+		"code": msg.CODE,
+		"id":   msg.GameHistoryID,
+		"ts":   ts,
+	}
 
 	utemp, err := url.ParseRequestURI(common.GetLoginAddr(msg.ADDR))
-	if err == nil {
+	if err != nil {
 		log.Errorf(err.Error())
 		return "", false
 	}
 
 	urlMap, err := url.ParseQuery(utemp.RawQuery)
-	if err == nil {
+	if err != nil {
 		log.Errorf(err.Error())
 		return "", false
 	}
 
-	signalStr := util.Sign(signal, common.SECRET)
-	signal["h"] = signalStr
+	urlMap.Set("sid", msg.SID)
+	urlMap.Set("code", msg.CODE)
+	urlMap.Set("id", msg.GameHistoryID)
+	urlMap.Set("ts", ts)
+	urlMap.Set("h", util.Sign(signal, common.SECRET))
 
-	for k, v := range signal {
-		urlMap.Set(k, v)
-	}
+	// for k, v := range signal {
+	// 	urlMap.Set(k, v)
+	// }
 	utemp.RawQuery = urlMap.Encode()
 	return utemp.String(), true
 }
 
 func getRemoteUser(loginURL string) (*remoteUser, bool) {
+
+	fmt.Printf("URL:%v \n", loginURL)
 
 	res, err := http.Get(loginURL)
 	if err != nil {
@@ -119,7 +172,7 @@ func getRemoteUser(loginURL string) (*remoteUser, bool) {
 		log.Errorf(err.Error())
 		return nil, false
 	}
-	defer res.Body.Close()
+	res.Body.Close()
 	//解析返回的参数
 	remoteUser := new(remoteUser)
 	err = json.Unmarshal(result, remoteUser)

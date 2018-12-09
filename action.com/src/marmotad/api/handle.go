@@ -1,8 +1,8 @@
 package api
 
 import (
-	"marmotad/proto"
 	"marmotad/model"
+	"marmotad/proto"
 
 	"github.com/davyxu/cellnet"
 )
@@ -19,16 +19,22 @@ func Handle(ev cellnet.Event) {
 			model.RemoveClient(ev.Session().ID())
 		}
 	case *proto.LOGIN:
-		client , ok := model.ClientList[ev.Session().ID()]
-		if !ok{
-			//client在客户端列表没有找到
-			return 
+		client, ok := model.ClientList[ev.Session().ID()]
+		if !ok {
+			return
 		}
+		ack := new(proto.ACK)
 		if client.Login(msg) {
-
-		} else {
-			
+			client.LogicCheck = false
+			if utmp, ok := model.UserList[client.UID]; ok {
+				ack.ErrorCode = 0
+				ack.Result = utmp
+				ev.Session().Send(ack)
+				return
+			}
 		}
-
-
+		ack.ErrorCode = 10002
+		ack.ErrorReason = "登陆失败"
+		ev.Session().Send(ack)
+	}
 }
