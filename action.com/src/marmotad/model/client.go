@@ -16,7 +16,7 @@ var (
 //Client 客户端信息
 type Client struct {
 	Session     cellnet.Session //session
-	UID         string          //用户ID
+	UID         int             //用户ID
 	SID         string          //SID
 	time        time.Timer      //定时器
 	clientMutex sync.Mutex      //互斥锁

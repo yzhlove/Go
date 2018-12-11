@@ -8,7 +8,7 @@ import (
 	"marmotad/proto"
 	"marmotad/util"
 	"net/http"
-	"net/url"
+	"strings"
 	"time"
 )
 
@@ -27,7 +27,7 @@ type remoteUser struct {
 	IsDiamond   int    `json:"scene_type"`
 	Users       []struct {
 		ID     int    `json:"id"`
-		UID    string `json:"uid"`
+		UID    int    `json:"uid"`
 		SID    string `json:"sid"`
 		SEX    int    `json:"sex"`
 		Avatar string `json:"avatar_small_url"`
@@ -113,7 +113,7 @@ func (client *Client) Login(msg *proto.LOGIN) bool {
 		}
 	}
 	//查找当前用户
-	if utp, ok := UserList[client.UID]; !ok || utp.UID == "" {
+	if utp, ok := UserList[client.UID]; !ok || utp.UID == 0 {
 		return false
 	}
 	if retUser.RoomID == 0 {
@@ -124,38 +124,22 @@ func (client *Client) Login(msg *proto.LOGIN) bool {
 
 func getLoginAddrString(msg *proto.LOGIN) (string, bool) {
 
-	ts := fmt.Sprintf("%d", time.Now().Unix())
+	urlMap := make(map[string]string)
+	urlMap["sid"] = msg.SID
+	urlMap["code"] = msg.CODE
+	urlMap["id"] = msg.GameHistoryID
+	urlMap["request_root"] = msg.ADDR
+	urlMap["ts"] = fmt.Sprintf("%d", time.Now().Unix())
+	//签名
+	urlMap["h"] = util.Sign(urlMap, common.SECRET)
 
-	signal := map[string]string{
-		"sid":  msg.SID,
-		"code": msg.CODE,
-		"id":   msg.GameHistoryID,
-		"ts":   ts,
+	uriList := make([]string, 0, len(urlMap))
+	for k, v := range urlMap {
+		uriList = append(uriList, k+"="+v)
 	}
-
-	utemp, err := url.ParseRequestURI(common.GetLoginAddr(msg.ADDR))
-	if err != nil {
-		log.Errorf(err.Error())
-		return "", false
-	}
-
-	urlMap, err := url.ParseQuery(utemp.RawQuery)
-	if err != nil {
-		log.Errorf(err.Error())
-		return "", false
-	}
-
-	urlMap.Set("sid", msg.SID)
-	urlMap.Set("code", msg.CODE)
-	urlMap.Set("id", msg.GameHistoryID)
-	urlMap.Set("ts", ts)
-	urlMap.Set("h", util.Sign(signal, common.SECRET))
-
-	// for k, v := range signal {
-	// 	urlMap.Set(k, v)
-	// }
-	utemp.RawQuery = urlMap.Encode()
-	return utemp.String(), true
+	uriString := strings.Join(uriList, "&")
+	urlString := common.GetLoginAddr(msg.ADDR) + "?" + uriString
+	return urlString, true
 }
 
 func getRemoteUser(loginURL string) (*remoteUser, bool) {
@@ -173,11 +157,13 @@ func getRemoteUser(loginURL string) (*remoteUser, bool) {
 		return nil, false
 	}
 	res.Body.Close()
+	// fmt.Printf("result = %v \n", string(result))
 	//解析返回的参数
 	remoteUser := new(remoteUser)
 	err = json.Unmarshal(result, remoteUser)
 	if err != nil {
 		return nil, false
 	}
+	fmt.Printf("retUser = %v \n", remoteUser)
 	return remoteUser, true
 }

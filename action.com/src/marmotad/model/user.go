@@ -10,9 +10,9 @@ type User struct {
 	AI        int    `json:"ai"`
 	Avatar    string `json:"avatar"`
 	SEX       int    `json:"sex"`
-	UID       string `json:"UID"`
+	UID       int    `json:"UID"`
 	Name      string `json:"user_name"`
-	AUID      string `json:"-"`
+	AUID      int    `json:"-"`
 	RID       string `json:"-"`
 	Ready     bool   `json:"ready"`
 	SID       string `json:"-"`
@@ -26,13 +26,13 @@ type User struct {
 
 var (
 	//UserList 玩家列表
-	UserList      map[string]*User
+	UserList      map[int]*User
 	userListMutex sync.Mutex
 	//UserClient User与Client对应
-	UserClient map[string]int64
+	UserClient map[int]int64
 )
 
 func init() {
-	UserList = make(map[string]*User)
-	UserClient = make(map[string]int64)
+	UserList = make(map[int]*User)
+	UserClient = make(map[int]int64)
 }
