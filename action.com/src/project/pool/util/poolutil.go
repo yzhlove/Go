@@ -45,3 +45,43 @@ func (p *Pool) Acquire() (io.Closer, error) {
 		return p.factory()
 	}
 }
+
+//Release 将一个使用后的资源放回pool
+func (p *Pool) Release(r io.Closer) {
+	//保证操作安全
+	p.m.Lock()
+	defer p.m.Unlock()
+
+	if p.closed {
+		r.Close()
+		return
+	}
+	select {
+	case p.resource <- r:
+		log.Println("Release:", "In Queue")
+	default:
+		log.Println("Release", "Closing")
+		r.Close()
+	}
+}
+
+//Close pool停止工作，并关闭现有资源
+func (p *Pool) Close() {
+	//保证本次操作安全
+	p.m.Lock()
+	defer p.m.Unlock()
+	//检查pool是否关闭
+	if p.closed {
+		return
+	}
+	//关闭pool
+	p.closed = true
+	//在清空通道里的资源之前，需要将通道先关闭
+	//如果不这样做，将会发生死锁
+	close(p.resource)
+
+	//关闭资源
+	for r := range p.resource {
+		r.Close()
+	}
+}
