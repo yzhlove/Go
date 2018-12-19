@@ -17,4 +17,6 @@ func ExampleZset(db *ssdb.Client) {
 	result, _ := db.Do("zrange", "link_queue", 0, -1)
 	fmt.Printf("result = %v \n", result)
 
+	
+
 }

@@ -100,4 +100,6 @@ func ExampleStrTest(client *redis.Client) {
 	valueArr, err := client.MGet("key1", "key2").Result()
 	fmt.Printf("valueArr: %v \n", valueArr)
 
+
+	
 }

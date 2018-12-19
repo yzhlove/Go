@@ -41,4 +41,6 @@ func ExampleHash(db *ssdb.Client) {
 	result, _ = db.Do("multi_hget", "people", "birthday", "name")
 	fmt.Printf("result = %v \n", result)
 
+	
+
 }
