@@ -50,11 +50,11 @@ func main() {
 
 	db := NewPostgresClient()
 	// queryQuestion(db)
-	// insertQuestion(db)
+	insertQuestion(db)
 	// queryOneQuestion(db)
 	// updateQuestion(db)
 	// deleteQuestion(db)
-	insertReturnQuestion(db)
+	//insertReturnQuestion(db)
 	db.Close()
 
 }
@@ -95,7 +95,7 @@ func insertQuestion(db *sql.DB) {
 	insertSQL := `INSERT INTO questions(title,options,answer,status,created_at,updated_at,rank) VALUES($1,$2,$3,$4,$5,$6,$7)`
 	stmt, _ := db.Prepare(insertSQL)
 	// _, err := stmt.Exec("我是谁?", "[\"成龙\",\"李连杰\",\"甄子丹\",\"吴京\"]", "A", 1, time.Now().Unix(), time.Now().Unix(), 1)
-	_, err := stmt.Exec("木兰辞出自", `["东汉","西汉","南宋","北宋"]`, "A", "1", time.Now().Unix(), time.Now().Unix(), "1")
+	_, err := stmt.Exec("周杰伦是哪里人", `["台湾","香港","美国","中国"]`, "D", "1", time.Now().Unix(), time.Now().Unix(), "1")
 	if err != nil {
 		panic(err)
 	} else {
