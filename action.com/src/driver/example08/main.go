@@ -228,9 +228,7 @@ func FindFirst(db *sql.DB) {
 	}
 }
 
-func FindFirst2(db *sql.DB) {
-	
-}
+
 
 
 
