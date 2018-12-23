@@ -20,13 +20,13 @@ const (
 	redisPoolSize = 20
 )
 
-//RedisOpt redia客户端结构
+//RedisOpt redis客户端结构
 type RedisOpt struct {
 	Client *redis.Client
 	Mutex  sync.Mutex
 }
 
-//RedisQueryModel 分野模型
+//RedisQueryModel 分页模型
 type RedisQueryModel struct {
 	Key   string
 	Page  int64
@@ -93,7 +93,8 @@ func (opt *RedisOpt) FindPage(model *RedisQueryModel) (*RedisQueryResult, bool) 
 	start := (model.Page - 1) * model.Total
 	end := model.Page*model.Total - 1
 	if results, err := opt.Client.ZRangeWithScores(model.Key, start, end).Result(); err == nil {
-		return &RedisQueryResult{Page: model.Page, Total: int64(len(results)), TotalPage: int64(totalPage), TotalEntries: totalEntries, Result: results}, true
+		return &RedisQueryResult{Page: model.Page, Total: int64(len(results)),
+			TotalPage: int64(totalPage), TotalEntries: totalEntries, Result: results}, true
 	} else {
 		log.Fatalln(err)
 	}
