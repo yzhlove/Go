@@ -1,4 +1,4 @@
-package driver
+package main
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	fishingRankExpireTime = 7 * 24 * 60 * 60
+	fishingRankExpireTime = time.Duration(7*24*60*60) * time.Second
 
 	redisAddr     = "127.0.0.1"
 	redisPort     = "6379"
@@ -42,34 +42,41 @@ type RedisQueryResult struct {
 	Result       []redis.Z
 }
 
-//GetRedisConnect redis连接
-type GetRedisConnect func() (*RedisOpt, error)
-
 //NewRedisClient 创建一个新的客户端
-func NewRedisClient() GetRedisConnect {
+func NewRedisClient() (*RedisOpt, bool) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisAddr + ":" + redisPort,
 		Password: redisPassword,
 		DB:       redisDBIndex,
 		PoolSize: redisPoolSize,
 	})
-	fmt.Printf("What are you doing ?")
-	_, err := client.Ping().Result()
-	return func() (*RedisOpt, error) {
-		if err != nil {
-			return nil, err
-		}
-		return &RedisOpt{Client: client}, nil
+	if _, err := client.Ping().Result(); err != nil {
+		return nil, false
 	}
+	return &RedisOpt{Client: client}, true
 }
 
 func main() {
 
-	redisConnect := NewRedisClient()
-	if _, err := redisConnect(); err != nil {
-		log.Fatalln(err)
+	opt, ok := NewRedisClient()
+	if !ok {
+		fmt.Printf("Create Redis Client Error!")
 		return
 	}
+	key := GetFishingKey("yuewan", "gold")
+	fmt.Printf("key = %v \n", key)
+	for k, v := range map[string]float64{"123": 123, "456": 456, "789": 789} {
+		go opt.InsertFishing(key, k, v)
+	}
+
+	time.Sleep(1 * time.Second)
+
+	dataMap, ok := opt.GetFishing(&RedisQueryModel{Key: key, Page: 1, Total: 20})
+	if !ok {
+		fmt.Printf("Get Data Error!")
+		return
+	}
+	fmt.Printf("dataMap = %v \n", dataMap)
 
 }
 
@@ -92,11 +99,11 @@ func (opt *RedisOpt) FindPage(model *RedisQueryModel) (*RedisQueryResult, bool) 
 	}
 	start := (model.Page - 1) * model.Total
 	end := model.Page*model.Total - 1
-	if results, err := opt.Client.ZRangeWithScores(model.Key, start, end).Result(); err == nil {
+	if results, err := opt.Client.ZRangeWithScores(model.Key, start, end).Result(); err != nil {
+		log.Fatalln(err)
+	} else {
 		return &RedisQueryResult{Page: model.Page, Total: int64(len(results)),
 			TotalPage: int64(totalPage), TotalEntries: totalEntries, Result: results}, true
-	} else {
-		log.Fatalln(err)
 	}
 	return nil, false
 }
@@ -119,27 +126,27 @@ func (opt *RedisOpt) InsertFishing(key, userUID string, value float64) (float64,
 	opt.Mutex.Lock()
 	defer opt.Mutex.Unlock()
 
-	if result, err := opt.Client.ZIncrBy(key, value, userUID).Result(); err == nil {
-		if ok, err := opt.Client.Expire(key, fishingRankExpireTime).Result(); ok {
-			return result, true
-		} else {
-			log.Fatalln(err)
-		}
-	} else {
+	if result, err := opt.Client.ZIncrBy(key, value, userUID).Result(); err != nil {
 		log.Fatalln(err)
+	} else {
+		if ok, err := opt.Client.Expire(key, fishingRankExpireTime).Result(); !ok {
+			log.Fatalln(err)
+		} else {
+			return result, true
+		}
 	}
 	return 0, false
 }
 
 //GetFishingKey 获取key
-func GetFishingKey(platform, style string) (string, bool) {
+func GetFishingKey(platform, style string) string {
 	platform = strings.TrimSpace(platform)
 	style = strings.TrimSpace(style)
 	if platform == "" || style == "" {
-		return "", false
+		return ""
 	}
 	title := "finish:day_rank"
 	timeFormat := time.Now().Format("20060102")
 	keys := []string{title, platform, style, timeFormat}
-	return strings.Join(keys, "_"), true
+	return strings.Join(keys, "_")
 }
