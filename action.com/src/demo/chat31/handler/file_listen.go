@@ -6,16 +6,14 @@ import (
 	"os"
 )
 
-func Handle(writer http.ResponseWriter, request *http.Request) {
+//Handle 处理函数
+func Handle(writer http.ResponseWriter, request *http.Request) error {
 
 	path := request.URL.Path[len("/list/"):]
 	file, err := os.Open(path)
 	if err != nil {
 		//panic(err)
-		http.Error(writer,
-			err.Error(),
-			http.StatusInternalServerError)
-		return
+		return err
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
@@ -26,10 +24,11 @@ func Handle(writer http.ResponseWriter, request *http.Request) {
 	//读取文件
 	all, err := ioutil.ReadAll(file)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if _, err = writer.Write(all); err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
