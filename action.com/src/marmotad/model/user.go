@@ -17,6 +17,7 @@ type User struct {
 	Ready     bool   `json:"ready"`
 	SID       string `json:"-"`
 	EnterFrom string `json:"-"`
+	IsFriend  int    `json:"is_friend"`
 	SiteTime  time.Time
 	mutex     sync.Mutex
 	Addr      string

@@ -26,13 +26,14 @@ type remoteUser struct {
 	Code        string `json:"code"`
 	IsDiamond   int    `json:"scene_type"`
 	Users       []struct {
-		ID     int    `json:"id"`
-		UID    int    `json:"uid"`
-		SID    string `json:"sid"`
-		SEX    int    `json:"sex"`
-		Avatar string `json:"avatar_small_url"`
-		Name   string `json:"nickname"`
-		AI     int    `json:"user_type"`
+		ID       int    `json:"id"`
+		UID      int    `json:"uid"`
+		SID      string `json:"sid"`
+		SEX      int    `json:"sex"`
+		Avatar   string `json:"avatar_small_url"`
+		Name     string `json:"nickname"`
+		AI       int    `json:"user_type"`
+		IsFriend int    `json:"friend_status"`
 	} `json:"users"`
 }
 
@@ -68,6 +69,7 @@ func (client *Client) Login(msg *proto.LOGIN) bool {
 			user.SEX = u.SEX
 			user.UID = u.UID
 			user.Name = u.Name
+			user.IsFriend = u.IsFriend
 
 			userListMutex.Lock()
 			if _, ok := UserList[u.UID]; ok {
@@ -105,6 +107,7 @@ func (client *Client) Login(msg *proto.LOGIN) bool {
 			aiUser.IsDiamond = retUser.IsDiamond
 			aiUser.Addr = msg.ADDR
 			aiUser.App = retUser.Code
+			aiUser.IsFriend = u.IsFriend
 			//将AI用户加入用户列表
 			userListMutex.Lock()
 			UserList[u.UID] = aiUser
@@ -157,7 +160,7 @@ func getRemoteUser(loginURL string) (*remoteUser, bool) {
 		return nil, false
 	}
 	res.Body.Close()
-	// fmt.Printf("result = %v \n", string(result))
+	fmt.Printf("result = %v \n", string(result))
 	//解析返回的参数
 	remoteUser := new(remoteUser)
 	err = json.Unmarshal(result, remoteUser)
