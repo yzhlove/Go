@@ -1,0 +1,60 @@
+{
+    "error_code": 0,
+    "error_reason": "",
+    "error_url": "",
+    "now_at": 1545831450,
+    "responseData": {
+        "results": [
+            {
+                "GsearchResultClass": "Java",
+                "unescapeUrl": "baidu",
+                "url": "sina",
+                "visibleUrl": "google",
+                "cacheUrl": "image",
+                "title": "spring1",
+                "titleNoFormatting": "utf8",
+                "content": "default"
+            },
+            {
+                "GsearchResultClass": "Ruby",
+                "unescapeUrl": "baidu",
+                "url": "sina",
+                "visibleUrl": "google",
+                "cacheUrl": "image",
+                "title": "spring2",
+                "titleNoFormatting": "utf8",
+                "content": "default"
+            },
+            {
+                "GsearchResultClass": "Python",
+                "unescapeUrl": "baidu",
+                "url": "sina",
+                "visibleUrl": "google",
+                "cacheUrl": "image",
+                "title": "spring3",
+                "titleNoFormatting": "utf8",
+                "content": "default"
+            },
+            {
+                "GsearchResultClass": "Linux",
+                "unescapeUrl": "baidu",
+                "url": "sina",
+                "visibleUrl": "google",
+                "cacheUrl": "image",
+                "title": "spring4",
+                "titleNoFormatting": "utf8",
+                "content": "default"
+            },
+            {
+                "GsearchResultClass": "Golang",
+                "unescapeUrl": "baidu",
+                "url": "sina",
+                "visibleUrl": "google",
+                "cacheUrl": "image",
+                "title": "spring5",
+                "titleNoFormatting": "utf8",
+                "content": "default"
+            }
+        ]
+    }
+}
