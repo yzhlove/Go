@@ -40,9 +40,7 @@ func TestSendJson(t *testing.T) {
 		if err := json.NewDecoder(rw.Body).Decode(&u); err != nil {
 			t.Fatal("JsonDecode Err.  ", ballotX)
 		}
-
 		t.Log("JsonDecode Successful. ", checkMark)
-
 		t.Logf("UserInfo :%v %v\n", u, checkMark)
 	}
 }
