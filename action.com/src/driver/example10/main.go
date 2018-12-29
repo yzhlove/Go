@@ -78,6 +78,20 @@ func main() {
 	}
 	fmt.Printf("dataMap = %v \n", dataMap)
 
+	fmt.Println("--------------------------------")
+
+	if data, ok := opt.GetRank(key, 10); ok {
+		fmt.Printf("rank: %v \n", data)
+	}
+
+	if data, ok := opt.GetRank(key, 2); ok {
+		fmt.Printf("rank: %v \n", data)
+	}
+
+	if index, ok := opt.GetMemberRank(key, "789"); ok {
+		fmt.Printf("member:%v index:%v \n", "789", index)
+	}
+
 }
 
 //FindPage 分页
@@ -149,4 +163,32 @@ func GetFishingKey(platform, style string) string {
 	timeFormat := time.Now().Format("20060102")
 	keys := []string{title, platform, style, timeFormat}
 	return strings.Join(keys, "_")
+}
+
+//GetRank 获取排行榜
+func (opt *RedisOpt) GetRank(key string, total int64) (map[int]map[string]float64, bool) {
+
+	result, err := opt.Client.ZRevRangeWithScores(key, 0, total-1).Result()
+	if err != nil {
+		//log.Debugln(err)
+		log.Fatalln(err)
+		return nil, false
+	}
+	rankData := make(map[int]map[string]float64)
+	length := len(result)
+	for i := 0; i < length; i++ {
+		temp := map[string]float64{result[i].Member.(string): result[i].Score}
+		rankData[i+1] = temp
+	}
+	return rankData, true
+}
+
+//GetMemberRank 获取单个成员排行
+func (opt *RedisOpt) GetMemberRank(key, member string) (int64, bool) {
+	if index, err := opt.Client.ZRevRank(key, member).Result(); err != nil {
+		log.Fatalln(err)
+	} else {
+		return index + 1, true
+	}
+	return 0, false
 }
