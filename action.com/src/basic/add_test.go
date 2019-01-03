@@ -28,5 +28,14 @@ func TestTriangle(t *testing.T) {
 			t.Errorf("calc Err:%d %d %d success:%d ", temp.a, temp.b, temp.c, result)
 		}
 	}
+}
+
+func BenchmarkSubstr(b *testing.B) {
+
+	str := "黑化肥挥发发灰会花飞灰化肥挥发非黑会飞花"
+
+	for k, v := range []rune(str) {
+
+	}
 
 }
