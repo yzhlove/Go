@@ -1,7 +1,8 @@
-package basic
+package chat01
 
 import (
 	"math"
+	"strings"
 	"testing"
 )
 
@@ -33,9 +34,28 @@ func TestTriangle(t *testing.T) {
 func BenchmarkSubstr(b *testing.B) {
 
 	str := "黑化肥挥发发灰会花飞灰化肥挥发非黑会飞花"
+	chars := []rune(str)
+	for _, v := range chars {
+		if strings.Index(str, string(v)) == -1 {
+			b.Errorf("find Err:%c ", v)
+		}
+	}
+}
 
-	for k, v := range []rune(str) {
+//性能测试案例
+func BenchmarkSearch(b *testing.B) {
 
+	value := make(map[int]int)
+
+	for i := 0; i < 100; i++ {
+		for j := 0; j < 100; j++ {
+			for k := 0; k < 100; k++ {
+				value[i] += j * k
+			}
+		}
 	}
 
+	for k, v := range value {
+		b.Logf("index:%d value:%d", k, v)
+	}
 }
