@@ -9,5 +9,8 @@ func main() {
 
 	index := 2
 	fmt.Println(seq[:index], seq[index+1:])
+	fmt.Printf("%v \n", seq)
+	seq = append(seq[:index], seq[index+1:]...)
+	fmt.Printf("%v \n", seq)
 
 }
