@@ -37,7 +37,6 @@ func main() {
 				fmt.Printf("data :%d \n", data)
 				time.Sleep(2 * time.Second)
 			}
-
 		}
 		sign <- 1
 	}()
