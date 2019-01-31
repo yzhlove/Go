@@ -16,6 +16,7 @@ func (l *Logger) Register(writer LogWriter) {
 //Log 显示
 func (l *Logger) Log(data interface{}) {
 	for _, write := range l.writeList {
+		//fmt.Println("%T \n", write)
 		_ = write.Write(data)
 	}
 }

@@ -16,6 +16,9 @@ func (f *fileWrite) SetFile(filename string) (err error) {
 		f.file.Close()
 	}
 	f.file, err = os.Create(filename)
+	if err != nil {
+		fmt.Println("FileErr:", err.Error())
+	}
 	return err
 }
 
