@@ -16,13 +16,25 @@ import (
 	"golang.org/x/text/encoding"
 )
 
+//浏览器标识
+const (
+	browserTag = `User-Agent`
+	userAgent  = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36`
+)
+
 func Fetch(url string) ([]byte, error) {
 	var (
+		request  *http.Request
 		response *http.Response
 		err      error
+		bytes    []byte
 	)
 
-	if response, err = http.Get(url); err != nil {
+	if request, err = http.NewRequest(http.MethodGet, url, nil); err != nil {
+		return nil, err
+	}
+	request.Header.Add(browserTag, userAgent)
+	if response, err = http.DefaultClient.Do(request); err != nil {
 		return nil, err
 	}
 	defer response.Body.Close()
@@ -33,7 +45,8 @@ func Fetch(url string) ([]byte, error) {
 	bodyReader := bufio.NewReader(response.Body)
 	e := getEncoding(bodyReader)
 	utf8Reader := transform.NewReader(bodyReader, e.NewDecoder())
-	return ioutil.ReadAll(utf8Reader)
+	bytes, err = ioutil.ReadAll(utf8Reader)
+	return bytes, err
 }
 
 func getEncoding(read *bufio.Reader) encoding.Encoding {
