@@ -12,15 +12,18 @@ type ConcurrentEngine struct {
 type Scheduler interface {
 	Submit(Request)
 	ConfigureMasterWorkChan(chan Request)
+	WorkerReady(chan Request)
+	Run()
 }
 
 func (e *ConcurrentEngine) Run(seeds ...Request) {
 
-	in := make(chan Request)
+	//in := make(chan Request)
 	out := make(chan ParseResult)
-	e.Scheduler.ConfigureMasterWorkChan(in)
+	e.Scheduler.Run()
+	//e.Scheduler.ConfigureMasterWorkChan(in)
 	for i := 0; i < e.WorkCount; i++ {
-		createWorker(in, out)
+		createWorker(out, e.Scheduler)
 	}
 	for _, seed := range seeds {
 		e.Scheduler.Submit(seed)
@@ -39,10 +42,11 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 
 }
 
-func createWorker(in chan Request, out chan ParseResult) {
-
+func createWorker(out chan ParseResult, s Scheduler) {
+	in := make(chan Request)
 	go func() {
 		for {
+			s.WorkerReady(in)
 			request := <-in
 			if result, err := worker(request); err != nil {
 				continue
@@ -51,5 +55,4 @@ func createWorker(in chan Request, out chan ParseResult) {
 			}
 		}
 	}()
-
 }
