@@ -1,0 +1,49 @@
+### 查询单条
+GET http://localhost:9200/imooc/cource/1
+
+### 添加数据 (PUT)
+PUT http://localhost:9200/imooc/cource/3
+Content-Type: application/json
+
+{"name": "C++","instructor": "ccmouse"}
+
+### 添加数据 (POST)
+POST http://localhost:9200/imooc/cource/4
+Content-Type: application/json
+
+{"name": "php","instructor": "ccmouse"}
+
+### 查询所有
+GET http://localhost:9200/imooc/cource/_search
+
+### 带条件查询
+GET http://localhost:9200/imooc/cource/_search?q=ccmouse
+
+### 自动格式化 pretty=true
+GET http://localhost:9200/imooc/cource/_search?pretty=true
+
+### 添加数据 （不加ID必须使用POST）
+POST http://localhost:9200/imooc/cource/
+Content-Type: application/json
+
+{"name": "golang_pipeline", "instructor": "ccmouse","url": "https://www.imooc.com"}
+
+###
+GET http://localhost:9200/imooc/cource/_search
+
+### 对已有数据添加属性
+PUT http://localhost:9200/imooc/cource/3
+Content-Type: application/json
+
+{"name": "python","instructor": "ccmouse","url": "http://www.imooc.com/python"}
+
+###
+GET http://localhost:9200/imooc/cource/_mapping
+
+###
+GET http://localhost:9200/dating_profile/zhenai/_search
+
+###
+
+
+
