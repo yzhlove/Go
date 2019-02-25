@@ -44,6 +44,24 @@ GET http://localhost:9200/imooc/cource/_mapping
 GET http://localhost:9200/dating_profile/zhenai/_search
 
 ###
+POST http://localhost:9200/imooc/cource
+Content-Type: application/json
 
+{"baseInfo":["离异","37岁","天蝎座(10.23-11.21)","160cm","51kg","工作地:阿坝马尔康","月收入:3-5千","小学教师","大学本科"]}
 
+###
+POST http://localhost:9200/imooc/cource
+Content-Type: application/json
 
+{"baseInfo":["未婚","25岁","魔羯座(12.22-01.19)","165cm","51kg","工作地:上海浦东新区","月收入:8千-1.2万","教育\u002F科研","大学本科"]}
+
+###
+
+###
+GET http://localhost:9200/imooc/cource/_search?q="37岁"
+
+###
+GET http://localhost:9200/dating_profile/zhenai/_search
+
+###
+GET http://localhost:9200/dating_profile/zhenai/_search?q=大学本科 未婚

@@ -2,44 +2,51 @@ package persist
 
 import (
 	"context"
+	"fmt"
+	"journey/chat31_love/engine"
 	"log"
+
+	"github.com/pkg/errors"
 
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
-func ItemSave() chan interface{} {
-	out := make(chan interface{}, 128)
+func ItemSave() chan engine.Item {
+	out := make(chan engine.Item, 128)
 	go func() {
 		itemCount := 0
 		for {
-			item := <-out
-			log.Printf("Item:%d %v\n", itemCount, item)
+			it := <-out
+			log.Printf("Item:%d %+v\n", itemCount, it)
 			itemCount++
-			if _, err := save(item); err != nil {
-				log.Printf("Save Err %+v : %+v \n", item, err)
-			}
+			_, _ = save(it)
 		}
 	}()
 	return out
 }
 
 //操作elastic search
-func save(item interface{}) (string, error) {
+func save(item engine.Item) error {
 	var (
 		client *elastic.Client
 		err    error
-		resp   *elastic.IndexResponse
 	)
 	if client, err = elastic.NewClient(elastic.SetSniff(false)); err != nil {
 		panic(err)
 	}
 
-	if resp, err = client.Index().
-		Index("dating_profile").
-		Type("zhenai").
-		BodyJson(item).Do(context.Background()); err != nil {
-		panic(err)
+	if item.Type == "" {
+		return errors.New("must not empty")
 	}
 
-	return resp.Id, nil
+	indexService := client.Index().
+		Index("dating_profile").Type(item.Type).BodyJson(item)
+	if item.Id != "" {
+		indexService.Id(item.Id)
+	}
+	if _, err = indexService.Do(context.Background()); err != nil {
+		fmt.Printf("Item Err: %+v \n", item)
+	}
+
+	return nil
 }

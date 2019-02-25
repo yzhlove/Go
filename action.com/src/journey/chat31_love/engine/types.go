@@ -10,6 +10,13 @@ type ParseResult struct {
 	Items    []interface{}
 }
 
+type Item struct {
+	URL    string
+	Id     string
+	Type   string
+	Detail interface{}
+}
+
 func NilParser(b []byte) ParseResult {
 	return ParseResult{}
 }

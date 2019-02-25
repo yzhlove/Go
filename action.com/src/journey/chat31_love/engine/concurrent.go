@@ -33,9 +33,16 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			go func() { e.ItemChan <- item }()
+			go func() {
+				if v, ok := item.(Item); ok {
+					e.ItemChan <- v
+				}
+			}()
 		}
 		for _, request := range result.Requests {
+			if isDuplicate(request.URL) {
+				continue
+			}
 			e.Scheduler.Submit(request)
 		}
 	}
@@ -54,4 +61,14 @@ func createWorker(in chan Request, out chan ParseResult, s Scheduler) {
 			}
 		}
 	}()
+}
+
+var mapeURL = make(map[string]bool)
+
+func isDuplicate(url string) bool {
+	if v, ok := mapeURL[url]; ok && v {
+		return true
+	}
+	mapeURL[url] = true
+	return false
 }
