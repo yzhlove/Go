@@ -1,19 +1,20 @@
 package engine
 
-import (
-	"log"
-)
-
 type ConcurrentEngine struct {
 	Scheduler Scheduler
 	WorkCount int
+	ItemChan  chan interface{}
 }
 
 type Scheduler interface {
+	ReadyNotifier
 	Submit(Request)
-	ConfigureMasterWorkChan(chan Request)
-	WorkerReady(chan Request)
+	WorkChan() chan Request
 	Run()
+}
+
+type ReadyNotifier interface {
+	WorkerReady(chan Request)
 }
 
 func (e *ConcurrentEngine) Run(seeds ...Request) {
@@ -23,17 +24,16 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	e.Scheduler.Run()
 	//e.Scheduler.ConfigureMasterWorkChan(in)
 	for i := 0; i < e.WorkCount; i++ {
-		createWorker(out, e.Scheduler)
+		createWorker(e.Scheduler.WorkChan(), out, e.Scheduler)
 	}
 	for _, seed := range seeds {
 		e.Scheduler.Submit(seed)
 	}
-	itemCount := 0
+
 	for {
 		result := <-out
 		for _, item := range result.Items {
-			log.Printf("Get Item:#%d %v \n", itemCount, item)
-			itemCount++
+			go func() { e.ItemChan <- item }()
 		}
 		for _, request := range result.Requests {
 			e.Scheduler.Submit(request)
@@ -42,8 +42,7 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 
 }
 
-func createWorker(out chan ParseResult, s Scheduler) {
-	in := make(chan Request)
+func createWorker(in chan Request, out chan ParseResult, s Scheduler) {
 	go func() {
 		for {
 			s.WorkerReady(in)
