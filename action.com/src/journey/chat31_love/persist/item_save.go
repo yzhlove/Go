@@ -11,7 +11,15 @@ import (
 	elastic "gopkg.in/olivere/elastic.v5"
 )
 
-func ItemSave() chan engine.Item {
+func ItemSave(index string) (chan engine.Item, error) {
+	var (
+		client *elastic.Client
+		err    error
+	)
+	if client, err = elastic.NewClient(elastic.SetSniff(false)); err != nil {
+		return nil, err
+	}
+
 	out := make(chan engine.Item, 128)
 	go func() {
 		itemCount := 0
@@ -19,28 +27,21 @@ func ItemSave() chan engine.Item {
 			it := <-out
 			log.Printf("Item:%d %+v\n", itemCount, it)
 			itemCount++
-			_ = save(it)
+			_ = save(client, index, it)
 		}
 	}()
-	return out
+	return out, nil
 }
 
 //操作elastic search
-func save(item engine.Item) error {
-	var (
-		client *elastic.Client
-		err    error
-	)
-	if client, err = elastic.NewClient(elastic.SetSniff(false)); err != nil {
-		panic(err)
-	}
-
+func save(client *elastic.Client, index string, item engine.Item) error {
+	var err error
 	if item.Type == "" {
 		return errors.New("must not empty")
 	}
 
 	indexService := client.Index().
-		Index("dating_profile").Type(item.Type).BodyJson(item)
+		Index(index).Type(item.Type).BodyJson(item)
 	if item.Id != "" {
 		indexService.Id(item.Id)
 	}

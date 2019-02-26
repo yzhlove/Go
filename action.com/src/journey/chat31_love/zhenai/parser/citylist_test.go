@@ -22,7 +22,7 @@ func TestParseCityList(t *testing.T) {
 		t.Error(err)
 	}
 
-	parseRes := ParseCityList(body)
+	parseRes := ParseCityList(body, "http://www.baidu.com")
 
 	exceptRequests := []string{"http://www.zhenai.com/zhenghun/aba",
 		"http://www.zhenai.com/zhenghun/akesu",

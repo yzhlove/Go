@@ -15,16 +15,22 @@ const (
 )
 
 func main() {
-
+	var (
+		itemChan chan engine.Item
+		err      error
+	)
 	/*	engine.SimpleEngine{}.Run(engine.Request{
 		URL:       url,
 		ParseFunc: parser.ParseCityList,
 	})*/
 
+	if itemChan, err = persist.ItemSave("dating_profile"); err != nil {
+		panic(err)
+	}
 	e := engine.ConcurrentEngine{
 		Scheduler: &scheduler.QueueScheduler{},
 		WorkCount: 100,
-		ItemChan:  persist.ItemSave(),
+		ItemChan:  itemChan,
 	}
 
 	//e.Run(engine.Request{

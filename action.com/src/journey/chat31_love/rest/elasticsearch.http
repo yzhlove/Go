@@ -64,9 +64,12 @@ GET http://localhost:9200/imooc/cource/_search?q="37岁"
 GET http://localhost:9200/dating_profile/zhenai/_search
 
 ###
-GET http://localhost:9200/dating_profile/zhenai/_search?q=大学本科 未婚
+GET http://localhost:9200/dating_profile/zhenai/_search?q=大学本科 离异 Age:(<26)&pretty=true
 
 ###
 GET http://localhost:9200/dating_profile/zhenai/1769167712
+
+###
+GET http://localhost:9200/dating_test/zhenai/_search
 
 ###

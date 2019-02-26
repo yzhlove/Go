@@ -37,3 +37,9 @@ func ParseProfile(contents []byte, url, name string) engine.ParseResult {
 		Items: []engine.Item{{URL: url, Type: "zhenai", Id: Id, Detail: userProfile}},
 	}
 }
+
+func ProfileParser(name string) engine.ParseFunc {
+	return func(bytes []byte, url string) engine.ParseResult {
+		return ParseProfile(bytes, url, name)
+	}
+}

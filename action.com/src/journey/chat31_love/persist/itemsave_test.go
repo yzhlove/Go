@@ -18,6 +18,7 @@ func TestSave(t *testing.T) {
 		client  *elastic.Client
 		actual  engine.Item
 		profile model.Profile
+		index   = "dating_test"
 	)
 
 	excepted := engine.Item{
@@ -39,10 +40,10 @@ func TestSave(t *testing.T) {
 			Car:        "未购车",
 		},
 	}
-	if err = save(excepted); err != nil {
+	if client, err = elastic.NewClient(elastic.SetSniff(false)); err != nil {
 		panic(err)
 	}
-	if client, err = elastic.NewClient(elastic.SetSniff(false)); err != nil {
+	if err = save(client, index, excepted); err != nil {
 		panic(err)
 	}
 	if resp, err = client.Get().Index("dating_profile").
