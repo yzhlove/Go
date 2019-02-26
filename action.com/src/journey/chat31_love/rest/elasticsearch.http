@@ -65,3 +65,8 @@ GET http://localhost:9200/dating_profile/zhenai/_search
 
 ###
 GET http://localhost:9200/dating_profile/zhenai/_search?q=大学本科 未婚
+
+###
+GET http://localhost:9200/dating_profile/zhenai/1769167712
+
+###

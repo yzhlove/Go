@@ -6,12 +6,12 @@ import (
 	"regexp"
 )
 
-var userInfoReg = `<div class="m-btn [a-z]+" data-v-[a-zA-Z0-9]+>([^<]+)</div>`
+var userInfoReg = regexp.MustCompile(`<div class="m-btn [a-z]+" data-v-[a-zA-Z0-9]+>([^<]+)</div>`)
+var urlReg = regexp.MustCompile(`http://album.zhenai.com/u/([0-9]+)`)
 
-func ParseProfile(contents []byte, name string) engine.ParseResult {
+func ParseProfile(contents []byte, url, name string) engine.ParseResult {
 	userProfile := model.Profile{}
-	reg := regexp.MustCompile(userInfoReg)
-	matchers := reg.FindAllSubmatch(contents, -1)
+	matchers := userInfoReg.FindAllSubmatch(contents, -1)
 
 	userProfile.NickName = name
 
@@ -27,7 +27,13 @@ func ParseProfile(contents []byte, name string) engine.ParseResult {
 		userProfile.HoKou = string(matchers[10][1])
 	}
 
+	//从URL解析用户的ID
+	Id := ""
+	results := urlReg.FindStringSubmatch(url)
+	if len(results) > 0 {
+		Id = results[1]
+	}
 	return engine.ParseResult{
-		Items: []interface{}{userProfile},
+		Items: []engine.Item{{URL: url, Type: "zhenai", Id: Id, Detail: userProfile}},
 	}
 }

@@ -38,7 +38,7 @@ func TestProfile(t *testing.T) {
 		panic(err)
 	}
 
-	t.Logf("%s", bytes)
+	//t.Logf("%s", bytes)
 
 	reg := regexp.MustCompile(tempReg)
 	matchers := reg.FindAllSubmatch(bytes, -1)
@@ -47,23 +47,17 @@ func TestProfile(t *testing.T) {
 		t.Error("match err")
 	}
 
-	//for _, match := range matchers {
-	//	t.Logf("%s \n", match)
-	//}
-
 	for i := 0; i < len(matchers); i++ {
 		t.Logf("%d %s -> %s\n", i, matchers[i][1], matchers[i][0])
 	}
 
-	//reg = regexp.MustCompile(infoReg)
-	//matchers = reg.FindAllSubmatch(bytes, -1)
-	//
-	//if len(matchers) == 0 {
-	//	t.Error("match err")
-	//}
-	//
-	//for _, match := range matchers {
-	//	t.Logf("%s \n", match)
-	//}
+}
 
+func TestParseURL(t *testing.T) {
+
+	const url = `http://album.zhenai.com/u/([0-9]+)`
+	const data = `http://album.zhenai.com/u/1426975040`
+	reg := regexp.MustCompile(url)
+	result := reg.FindStringSubmatch(data)
+	t.Logf("result : %v ", result)
 }

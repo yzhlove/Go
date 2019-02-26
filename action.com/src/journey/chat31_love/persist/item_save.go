@@ -19,7 +19,7 @@ func ItemSave() chan engine.Item {
 			it := <-out
 			log.Printf("Item:%d %+v\n", itemCount, it)
 			itemCount++
-			_, _ = save(it)
+			_ = save(it)
 		}
 	}()
 	return out

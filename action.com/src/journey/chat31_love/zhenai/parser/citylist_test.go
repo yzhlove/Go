@@ -27,7 +27,6 @@ func TestParseCityList(t *testing.T) {
 	exceptRequests := []string{"http://www.zhenai.com/zhenghun/aba",
 		"http://www.zhenai.com/zhenghun/akesu",
 		"http://www.zhenai.com/zhenghun/alashanmeng"}
-	exceptCitys := []string{"阿坝", "阿克苏", "阿拉善盟"}
 
 	if len(parseRes.Requests) != cityListNumber {
 		t.Errorf("request %d ", len(parseRes.Requests))
@@ -39,14 +38,8 @@ func TestParseCityList(t *testing.T) {
 		}
 	}
 
-	if len(parseRes.Items) != cityListNumber {
+	if len(parseRes.Requests) != cityListNumber {
 		t.Errorf("item %d", len(parseRes.Items))
-	}
-
-	for i, city := range exceptCitys {
-		if parseRes.Items[i] != city {
-			t.Errorf("item err:%s", parseRes.Items[i])
-		}
 	}
 
 }
