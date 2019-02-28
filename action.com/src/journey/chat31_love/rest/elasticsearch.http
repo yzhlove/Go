@@ -76,3 +76,6 @@ GET http://localhost:9200/dating_test/zhenai/_search
 GET http://localhost:9200
 
 ###
+GET http://localhost:9200/test/_search
+
+###

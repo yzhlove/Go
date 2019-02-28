@@ -27,14 +27,14 @@ func ItemSave(index string) (chan engine.Item, error) {
 			it := <-out
 			log.Printf("Item:%d %+v\n", itemCount, it)
 			itemCount++
-			_ = save(client, index, it)
+			_ = Save(client, index, it)
 		}
 	}()
 	return out, nil
 }
 
 //操作elastic search
-func save(client *elastic.Client, index string, item engine.Item) error {
+func Save(client *elastic.Client, index string, item engine.Item) error {
 	var err error
 	if item.Type == "" {
 		return errors.New("must not empty")

@@ -43,7 +43,7 @@ func TestSave(t *testing.T) {
 	if client, err = elastic.NewClient(elastic.SetSniff(false)); err != nil {
 		panic(err)
 	}
-	if err = save(client, index, excepted); err != nil {
+	if err = Save(client, index, excepted); err != nil {
 		panic(err)
 	}
 	if resp, err = client.Get().Index("dating_profile").

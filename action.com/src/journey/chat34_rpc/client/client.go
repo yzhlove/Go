@@ -9,14 +9,15 @@ import (
 
 func main() {
 	var (
-		conn net.Conn
-		err  error
+		conn   net.Conn
+		err    error
+		result float64
 	)
 	if conn, err = net.Dial("tcp", ":1234"); err != nil {
 		panic(err)
 	}
 	client := jsonrpc.NewClient(conn)
-	var result float64
+
 	err = client.Call("DemoService.Div", rpcdemo.Args{10, 5}, &result)
 	fmt.Println(result, err)
 
