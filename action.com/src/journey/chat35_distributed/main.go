@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"journey/chat31_love/engine"
 	"journey/chat31_love/scheduler"
 	"journey/chat31_love/zhenai/parser"
 	"journey/chat35_distributed/client"
+	"journey/chat35_distributed/config"
 )
 
 func main() {
@@ -12,7 +14,7 @@ func main() {
 		itemChan chan engine.Item
 		err      error
 	)
-	if itemChan, err = client.ItemSaver(":1234"); err != nil {
+	if itemChan, err = client.ItemSaver(fmt.Sprintf(":%d", config.ItemServerPort)); err != nil {
 		panic(err)
 	}
 	e := engine.ConcurrentEngine{

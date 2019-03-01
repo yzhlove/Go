@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"journey/chat35_distributed/config"
 	"journey/chat35_distributed/persist"
 	"journey/chat35_distributed/rpcsupport"
 	"log"
@@ -9,7 +11,7 @@ import (
 )
 
 func main() {
-	log.Fatal(ServeRpc(":1234", "dating_profile"))
+	log.Fatal(ServeRpc(fmt.Sprintf(":%d", config.ItemServerPort), config.ElasticIndex))
 }
 
 func ServeRpc(host, index string) error {

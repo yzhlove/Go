@@ -3,6 +3,7 @@ package main
 import (
 	"journey/chat31_love/engine"
 	"journey/chat31_love/model"
+	"journey/chat35_distributed/config"
 	"journey/chat35_distributed/rpcsupport"
 	"net/rpc"
 	"testing"
@@ -43,7 +44,7 @@ func TestItemSave(t *testing.T) {
 	}
 
 	result := ""
-	if err = client.Call("ItemSaveService.Save", excepted, &result); err != nil {
+	if err = client.Call(config.ItemServerRpc, excepted, &result); err != nil {
 		t.Errorf("save err %v ", err)
 	}
 	t.Logf("rpc save successful  = %v", result)
