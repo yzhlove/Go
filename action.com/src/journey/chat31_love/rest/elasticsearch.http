@@ -61,7 +61,7 @@ Content-Type: application/json
 GET http://localhost:9200/imooc/cource/_search?q="37岁"
 
 ###
-GET http://localhost:9200/dating_profile/zhenai/_search?size=2
+GET http://localhost:9200/dating_profile/zhenai/_search
 
 ###
 GET http://localhost:9200/dating_profile/zhenai/_search?q=大学本科 离异 Age:(<26)&pretty=true
