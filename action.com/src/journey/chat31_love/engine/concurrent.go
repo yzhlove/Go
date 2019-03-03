@@ -52,7 +52,7 @@ func createWorker(in chan Request, out chan ParseResult, s Scheduler) {
 		for {
 			s.WorkerReady(in)
 			request := <-in
-			if result, err := worker(request); err != nil {
+			if result, err := Worker(request); err != nil {
 				continue
 			} else {
 				out <- result

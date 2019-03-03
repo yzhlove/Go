@@ -5,6 +5,7 @@ import (
 	"journey/chat31_love/persist"
 	"journey/chat31_love/scheduler"
 	"journey/chat31_love/zhenai/parser"
+	"journey/chat35_distributed/config"
 )
 
 // 真爱网
@@ -42,7 +43,7 @@ func main() {
 	e.Run(engine.Request{
 		URL: url,
 		Parser: engine.NewFuncParser(
-			parser.ParseCityList, "ParseCityList"),
+			parser.ParseCityList, config.ParseCityList),
 	})
 
 }

@@ -20,7 +20,7 @@ func (e SimpleEngine) Run(seeds ...Request) {
 	for len(requests) > 0 {
 		req := requests[0]
 		requests = requests[1:]
-		if parseRes, err = worker(req); err != nil {
+		if parseRes, err = Worker(req); err != nil {
 			continue
 		}
 		parseRes = req.Parser.Parse(body, req.URL)

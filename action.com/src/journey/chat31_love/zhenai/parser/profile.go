@@ -3,6 +3,7 @@ package parser
 import (
 	"journey/chat31_love/engine"
 	"journey/chat31_love/model"
+	"journey/chat35_distributed/config"
 	"regexp"
 )
 
@@ -47,7 +48,7 @@ func (p *ProfileParser) Parse(contents []byte, url string) engine.ParseResult {
 }
 
 func (p *ProfileParser) Serialize() (name string, args interface{}) {
-	return "ProfileParser", p.userName
+	return config.ParseProfile, p.userName
 }
 
 func NewProfileParser(name string) *ProfileParser {

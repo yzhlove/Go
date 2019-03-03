@@ -2,6 +2,7 @@ package parser
 
 import (
 	"journey/chat31_love/engine"
+	"journey/chat35_distributed/config"
 	"regexp"
 )
 
@@ -26,7 +27,7 @@ func ParseCity(contents []byte, _ string) engine.ParseResult {
 		result.Requests = append(result.Requests, engine.Request{
 			URL: string(match[1]),
 			Parser: engine.NewFuncParser(
-				ParseCity, "ParseCity"),
+				ParseCity, config.ParseCity),
 		})
 	}
 

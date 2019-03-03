@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func worker(req Request) (ParseResult, error) {
+func Worker(req Request) (ParseResult, error) {
 	var (
 		bytes []byte
 		err   error

@@ -1,5 +1,7 @@
 package engine
 
+import "journey/chat35_distributed/config"
+
 type ParserFunc func(content []byte, url string) ParseResult
 
 type Parser interface {
@@ -31,7 +33,7 @@ func (NilParser) Parse(_ []byte, _ string) ParseResult {
 }
 
 func (NilParser) Serialize() (string, interface{}) {
-	return "NilParser", nil
+	return config.NilParser, nil
 }
 
 type FuncParser struct {
