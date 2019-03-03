@@ -23,7 +23,7 @@ func (e SimpleEngine) Run(seeds ...Request) {
 		if parseRes, err = worker(req); err != nil {
 			continue
 		}
-		parseRes = req.ParseFunc(body, req.URL)
+		parseRes = req.Parser.Parse(body, req.URL)
 		requests = append(requests, parseRes.Requests...)
 		for _, item := range parseRes.Items {
 			fmt.Printf("Get Item %v \n", item)

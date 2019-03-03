@@ -9,7 +9,7 @@ import (
 var userInfoReg = regexp.MustCompile(`<div class="m-btn [a-z]+" data-v-[a-zA-Z0-9]+>([^<]+)</div>`)
 var urlReg = regexp.MustCompile(`http://album.zhenai.com/u/([0-9]+)`)
 
-func ParseProfile(contents []byte, url, name string) engine.ParseResult {
+func parseProfile(contents []byte, url, name string) engine.ParseResult {
 	userProfile := model.Profile{}
 	matchers := userInfoReg.FindAllSubmatch(contents, -1)
 
@@ -38,8 +38,26 @@ func ParseProfile(contents []byte, url, name string) engine.ParseResult {
 	}
 }
 
-func ProfileParser(name string) engine.ParseFunc {
-	return func(bytes []byte, url string) engine.ParseResult {
-		return ParseProfile(bytes, url, name)
+type ProfileParser struct {
+	userName string
+}
+
+func (p *ProfileParser) Parse(contents []byte, url string) engine.ParseResult {
+	return parseProfile(contents, url, p.userName)
+}
+
+func (p *ProfileParser) Serialize() (name string, args interface{}) {
+	return "ProfileParser", p.userName
+}
+
+func NewProfileParser(name string) *ProfileParser {
+	return &ProfileParser{
+		userName: name,
 	}
 }
+
+//func ProfileParser(name string) engine.ParseFunc {
+//	return func(bytes []byte, url string) engine.ParseResult {
+//		return ParseProfile(bytes, url, name)
+//	}
+//}

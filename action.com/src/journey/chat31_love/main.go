@@ -40,8 +40,9 @@ func main() {
 
 	//上海
 	e.Run(engine.Request{
-		URL:       shanghai,
-		ParseFunc: parser.ParseCity,
+		URL: url,
+		Parser: engine.NewFuncParser(
+			parser.ParseCityList, "ParseCityList"),
 	})
 
 }

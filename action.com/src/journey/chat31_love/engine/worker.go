@@ -15,6 +15,6 @@ func worker(req Request) (ParseResult, error) {
 		log.Printf("Fetch err url:%s err:%v", req.URL, err)
 		return ParseResult{}, err
 	}
-	return req.ParseFunc(bytes, req.URL), nil
+	return req.Parser.Parse(bytes, req.URL), nil
 
 }

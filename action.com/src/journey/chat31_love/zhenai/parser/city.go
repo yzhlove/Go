@@ -15,8 +15,8 @@ func ParseCity(contents []byte, _ string) engine.ParseResult {
 
 	for _, match := range matchers {
 		result.Requests = append(result.Requests, engine.Request{
-			URL:       string(match[1]),
-			ParseFunc: ProfileParser(string(match[2])),
+			URL:    string(match[1]),
+			Parser: NewProfileParser(string(match[2])),
 		})
 	}
 
@@ -24,8 +24,9 @@ func ParseCity(contents []byte, _ string) engine.ParseResult {
 	for _, match := range matchers {
 		//log.Printf("MoreURL -> %s ", string(match[1]))
 		result.Requests = append(result.Requests, engine.Request{
-			URL:       string(match[1]),
-			ParseFunc: ParseCity,
+			URL: string(match[1]),
+			Parser: engine.NewFuncParser(
+				ParseCity, "ParseCity"),
 		})
 	}
 
