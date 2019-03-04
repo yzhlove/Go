@@ -9,4 +9,7 @@ const (
 	ParseCity     = "ParseCity"
 	ParseProfile  = "ProfileParser"
 	NilParser     = "NilParser"
+
+	WorkerPort0     = 9000
+	CrawlServiceRpc = "CrawlService.Process"
 )
