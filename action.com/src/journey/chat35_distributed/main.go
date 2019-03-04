@@ -7,7 +7,10 @@ import (
 	"journey/chat31_love/zhenai/parser"
 	iceservers "journey/chat35_distributed/client"
 	"journey/chat35_distributed/config"
+	"journey/chat35_distributed/rpcsupport"
 	worker "journey/chat35_distributed/worker/client"
+	"log"
+	"net/rpc"
 )
 
 func main() {
@@ -19,10 +22,8 @@ func main() {
 	if itemChan, err = iceservers.ItemSaver(fmt.Sprintf(":%d", config.ItemServerPort)); err != nil {
 		panic(err)
 	}
-
-	if processor, err = worker.CreateProcessor(); err != nil {
-		panic(err)
-	}
+	pool := createClientPool([]string{})
+	processor = worker.CreateProcessor(pool)
 
 	e := engine.ConcurrentEngine{
 		Scheduler:      &scheduler.QueueScheduler{},
@@ -34,4 +35,31 @@ func main() {
 		URL:    "http://www.zhenai.com/zhenghun/shanghai",
 		Parser: engine.NewFuncParser(parser.ParseCity, config.ParseCity),
 	})
+}
+
+func createClientPool(hosts []string) chan *rpc.Client {
+
+	var (
+		clients []*rpc.Client
+		tempCli *rpc.Client
+		err     error
+	)
+	for _, host := range hosts {
+		if tempCli, err = rpcsupport.NewClient(host); err != nil {
+			log.Printf("Error connecting %s: %v", host, err)
+		} else {
+			clients = append(clients, tempCli)
+			log.Printf("Connected %s ", host)
+		}
+	}
+
+	out := make(chan *rpc.Client)
+	go func() {
+		for {
+			for _, cli := range clients {
+				out <- cli
+			}
+		}
+	}()
+	return out
 }
