@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"journey/chat31_love/engine"
 	"journey/chat31_love/scheduler"
@@ -11,18 +12,25 @@ import (
 	worker "journey/chat35_distributed/worker/client"
 	"log"
 	"net/rpc"
+	"strings"
+)
+
+var (
+	itemSaveHost = flag.String("itemsave_host", "", "item save (':')")
+	workerHosts  = flag.String("worker_hosts", "", "worker hosts (',')")
 )
 
 func main() {
+	flag.Parse()
 	var (
 		itemChan  chan engine.Item
 		err       error
 		processor engine.Processor
 	)
-	if itemChan, err = iceservers.ItemSaver(fmt.Sprintf(":%d", config.ItemServerPort)); err != nil {
+	if itemChan, err = iceservers.ItemSaver(fmt.Sprintf("%s", *itemSaveHost)); err != nil {
 		panic(err)
 	}
-	pool := createClientPool([]string{})
+	pool := createClientPool(strings.Split(*workerHosts, ","))
 	processor = worker.CreateProcessor(pool)
 
 	e := engine.ConcurrentEngine{

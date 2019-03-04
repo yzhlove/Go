@@ -16,6 +16,7 @@ func ServerRpc(host string, service interface{}) error {
 	if err = rpc.Register(service); err != nil {
 		return err
 	}
+	log.Printf("[---- Listening: %s ----] \n", host)
 	if listener, err = net.Listen("tcp", host); err != nil {
 		return err
 	}
