@@ -29,9 +29,10 @@ func main() {
 		panic(err)
 	}
 	e := engine.ConcurrentEngine{
-		Scheduler: &scheduler.QueueScheduler{},
-		WorkCount: 100,
-		ItemChan:  itemChan,
+		Scheduler:      &scheduler.QueueScheduler{},
+		WorkCount:      100,
+		ItemChan:       itemChan,
+		RequestProcess: engine.Worker,
 	}
 
 	//e.Run(engine.Request{

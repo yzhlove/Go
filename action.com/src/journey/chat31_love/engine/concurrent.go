@@ -1,9 +1,12 @@
 package engine
 
+type Processor func(Request) (ParseResult, error)
+
 type ConcurrentEngine struct {
-	Scheduler Scheduler
-	WorkCount int
-	ItemChan  chan Item
+	Scheduler      Scheduler
+	WorkCount      int
+	ItemChan       chan Item
+	RequestProcess Processor
 }
 
 type Scheduler interface {
@@ -24,7 +27,7 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	e.Scheduler.Run()
 	//e.Scheduler.ConfigureMasterWorkChan(in)
 	for i := 0; i < e.WorkCount; i++ {
-		createWorker(e.Scheduler.WorkChan(), out, e.Scheduler)
+		e.createWorker(e.Scheduler.WorkChan(), out, e.Scheduler)
 	}
 	for _, seed := range seeds {
 		e.Scheduler.Submit(seed)
@@ -47,12 +50,12 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 
 }
 
-func createWorker(in chan Request, out chan ParseResult, s Scheduler) {
+func (e *ConcurrentEngine) createWorker(in chan Request, out chan ParseResult, s Scheduler) {
 	go func() {
 		for {
 			s.WorkerReady(in)
 			request := <-in
-			if result, err := Worker(request); err != nil {
+			if result, err := e.RequestProcess(request); err != nil {
 				continue
 			} else {
 				out <- result
