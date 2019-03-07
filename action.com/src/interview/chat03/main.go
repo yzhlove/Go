@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"runtime"
 	"sync"
-	"time"
 )
 
 func main() {
@@ -26,5 +25,5 @@ func main() {
 		}(i)
 	}
 	wg.Wait()
-	time.Sleep(time.Second)
+
 }
