@@ -12,6 +12,7 @@ func (stu *Student) Show() {
 
 }
 
+
 func live() People {
 	var stu *Student
 	return stu
