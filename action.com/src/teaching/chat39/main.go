@@ -1,8 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"teaching/chat39/tool"
 )
 
 type Skill struct {
@@ -28,9 +28,10 @@ func main() {
 		},
 	}
 
-	bytes, err := json.Marshal(actor)
+	bytes, err := tool.ToJson(actor)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println(string(bytes))
+
 }
