@@ -13,6 +13,8 @@ type searchKey struct {
 	Age  int
 }
 
+//多键索引
+
 var mapper = make(map[interface{}]*Profile)
 
 func buildIndex(list []*Profile) {
