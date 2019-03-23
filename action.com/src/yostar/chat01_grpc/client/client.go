@@ -28,7 +28,7 @@ func printFeature(client proto.RouteGuideClient, point *proto.Point) {
 	if feature, err := client.GetFeature(ctx, point); err != nil {
 		log.Fatalf("%v . GetFeatures() = , _ , %v \n", client, err)
 	} else {
-		log.Println(feature)
+		log.Println("print ------> ", feature)
 	}
 }
 
