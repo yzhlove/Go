@@ -16,7 +16,7 @@ const host = ":1234"
 
 var regMust = regexp.MustCompile(`\\[0-7]{3}`)
 
-func toChineseSimaple(in string) string {
+func toChineseSimple(in string) string {
 	out := regMust.ReplaceAllFunc([]byte(in), func(bytes []byte) []byte {
 		i, _ := strconv.ParseInt(string(bytes[1:]), 8, 0)
 		return []byte{byte(i)}
@@ -40,7 +40,7 @@ func main() {
 	fmt.Printf("resp:%v \n", response)
 
 	for _, value := range response.Title {
-		title := toChineseSimaple(value)
+		title := toChineseSimple(value)
 		fmt.Printf("title:%v \n", title)
 	}
 
