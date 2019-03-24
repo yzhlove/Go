@@ -1,0 +1,18 @@
+syntax = "proto3";
+package proto;
+
+service UserInfoService {
+    rpc GetUserInfo(UserReq) returns(UserResp) {}
+}
+
+message UserReq {
+    string name = 1;
+}
+
+message UserResp {
+    int32 id = 1;
+    string name = 2;
+    int32 age = 3;
+    repeated string title = 4;  //repeated => slice
+}
+
