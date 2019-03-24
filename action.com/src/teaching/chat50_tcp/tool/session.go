@@ -2,6 +2,7 @@ package tool
 
 import (
 	"bufio"
+	"fmt"
 	"net"
 )
 
@@ -16,5 +17,6 @@ func handleSession(conn net.Conn, callback func(net.Conn, []byte) bool) {
 			_ = conn.Close()
 			break
 		}
+		fmt.Printf("read Packer:%s \n", pkt.Body)
 	}
 }
