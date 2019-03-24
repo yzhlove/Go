@@ -57,3 +57,10 @@ func main() {
 	pb.RegisterUserInfoServiceServer(server, &UserInfo{})
 	_ = server.Serve(listen)
 }
+
+/*
+1.创建TCP端口监听
+2.实例化grpc服务
+3.在grpc上注册服务
+4.启动grpc服务
+*/
