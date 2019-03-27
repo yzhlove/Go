@@ -18,17 +18,23 @@ func NewRpcServer(address string) *RpcServer {
 func (rpcSev *RpcServer) Run() {
 	var (
 		listen net.Listener
-		conn net.Conn
-		err error
+		conn   net.Conn
+		err    error
+		bytes  []byte
 	)
-	if listen , err = net.Listen("tcp",rpcSev.addr);err != nil {
+	if listen, err = net.Listen("tcp", rpcSev.addr); err != nil {
 		panic(err)
 	}
 	for {
-		if conn , err = listen.Accept();err != nil {
-			log.Printf("Accepr Err:%v \n",err)
+		if conn, err = listen.Accept(); err != nil {
+			log.Printf("Accepr Err:%v \n", err)
 			continue
 		}
-		sevSession :=
+		session := NewSession(conn)
+		if bytes, err = session.Read(); err != nil {
+			log.Printf("SessReadErr:%v \n", err)
+			continue
+		}
+
 	}
 }
