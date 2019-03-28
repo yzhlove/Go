@@ -73,3 +73,10 @@ func (rpcSev *RpcServer) Run() {
 		log.Printf("SendSuccessful Data!\n")
 	}
 }
+
+func (rpcSev *RpcServer) Register(rpcName string, fn interface{}) {
+	if _, ok := rpcSev.funds[rpcName]; ok {
+		return
+	}
+	rpcSev.funds[rpcName] = reflect.ValueOf(fn)
+}
