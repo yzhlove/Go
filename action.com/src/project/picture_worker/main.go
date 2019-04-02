@@ -99,7 +99,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		keyValueMutex.RLock()
 		for key, value := range keyValueStore {
-			fmt.Print(w, key, ":", value)
+			_, _ = fmt.Fprint(w, key, ":", value, "\r\n")
 		}
 		keyValueMutex.RUnlock()
 	} else {
