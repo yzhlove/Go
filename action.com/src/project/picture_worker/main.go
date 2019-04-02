@@ -45,7 +45,31 @@ func get(w http.ResponseWriter, r *http.Request) {
 }
 
 func set(w http.ResponseWriter, r *http.Request) {
-
+	if r.Method == http.MethodPost {
+		values, err := url.ParseQuery(r.URL.RawQuery)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = fmt.Fprint(w, "Error:", err)
+			return
+		}
+		if len(values.Get("key")) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = fmt.Fprint(w, "Error:", "Wrong input key.")
+			return
+		}
+		if len(values.Get("value")) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = fmt.Fprint(w, "Error:", "Wrong input value.")
+			return
+		}
+		keyValueMutex.Lock()
+		keyValueStore[string(values.Get("key"))] = string(values.Get("value"))
+		keyValueMutex.Unlock()
+		_, _ = fmt.Fprint(w, "success")
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = fmt.Fprint(w, "Error:Only POST accept.")
+	}
 }
 
 func remove(w http.ResponseWriter, r *http.Request) {
