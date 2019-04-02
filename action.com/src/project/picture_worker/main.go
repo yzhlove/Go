@@ -73,9 +73,37 @@ func set(w http.ResponseWriter, r *http.Request) {
 }
 
 func remove(w http.ResponseWriter, r *http.Request) {
-
+	if r.Method == http.MethodDelete {
+		values, err := url.ParseQuery(r.URL.RawQuery)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = fmt.Fprint(w, "Error:", err)
+			return
+		}
+		if len(values.Get("key")) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = fmt.Fprint(w, "Error:", err)
+			return
+		}
+		keyValueMutex.Lock()
+		delete(keyValueStore, values.Get("key"))
+		keyValueMutex.Unlock()
+		_, _ = fmt.Fprint(w, "success")
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = fmt.Fprint(w, "Error:Only GET accept.")
+	}
 }
 
 func list(w http.ResponseWriter, r *http.Request) {
-
+	if r.Method == http.MethodGet {
+		keyValueMutex.RLock()
+		for key, value := range keyValueStore {
+			fmt.Print(w, key, ":", value)
+		}
+		keyValueMutex.RUnlock()
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		_, _ = fmt.Fprint(w, "Error:Only GET accept.")
+	}
 }
