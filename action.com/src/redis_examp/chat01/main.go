@@ -21,8 +21,9 @@ func main() {
 
 	fmt.Println(string(values[0].([]byte)))
 
-	for _, value := range values[1].([]interface{}) {
-		fmt.Println(string(value.([]byte)))
+	lists, _ := redis.Strings(values[1], nil)
+	for _, value := range lists {
+		fmt.Println(value)
 	}
 
 }
