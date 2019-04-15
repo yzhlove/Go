@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 )
 
 //文件备份工具
@@ -14,6 +13,7 @@ var source = flag.String("source", "", "来源:")
 var final = flag.String("final", "", "最终:")
 
 func main() {
+	flag.Parse()
 	var (
 		sourceBytes, backupBytes int64
 		err                      error
@@ -47,10 +47,10 @@ func checkFilePath(path string) (bytes int64, err error) {
 	var info os.FileInfo
 	if info, err = os.Stat(path); err != nil {
 		if os.IsNotExist(err) {
-			return 0, fmt.Errorf("文件不存在")
+			return 0, fmt.Errorf("文件不存在\n")
 		}
 		if info.IsDir() {
-			return 0, fmt.Errorf("不能是文件夹")
+			return 0, fmt.Errorf("不能是文件夹\n")
 		}
 	}
 	return info.Size(), nil
@@ -58,9 +58,6 @@ func checkFilePath(path string) (bytes int64, err error) {
 
 func backup(path string, num int64) error {
 	var (
-		directory = filepath.Dir(path)
-		base      = filepath.Base(path)
-		//ext        = filepath.Ext(path)
 		sourceFile *os.File
 		backupFile *os.File
 		bytes      int64
@@ -73,7 +70,10 @@ func backup(path string, num int64) error {
 
 	defer sourceFile.Close()
 
-	if backupFile, err = os.Create(directory + base + ".backup"); err != nil {
+	newPath := path + ".backup"
+	fmt.Printf("newPath = %v \n", newPath)
+
+	if backupFile, err = os.Create(newPath); err != nil {
 		panic(err)
 	}
 
