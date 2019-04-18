@@ -1,17 +1,21 @@
 package expre
 
 import (
-	"expression/chat03/match"
 	"log"
 	"strings"
 )
 
 type Matcher interface {
 	Express(key string) error
-	Query() error
 }
 
-var MatcherList map[string]Matcher
+const (
+	Default = "DEFAULT"
+	Game    = "GAME"
+	User    = "USER"
+)
+
+var MatcherList = make(map[string]Matcher)
 
 func Run(keys ...string) {
 	var (
@@ -23,12 +27,11 @@ func Run(keys ...string) {
 		if ok {
 			matcher = m
 		} else {
-			matcher = match.NewDefaultMatcher()
+			matcher = MatcherList[Default]
 		}
 		if err = matcher.Express(key); err != nil {
-			panic("Matcher Err")
+			log.Println(err)
 		}
-		_ = matcher.Query()
 	}
 }
 

@@ -24,11 +24,9 @@ func main() {
 	mustCompile := "(([a-zA-Z]+_[a-zA-z]+):{([0-9]+)}[:]?[0-9]*)"
 	reg := regexp.MustCompile(mustCompile)
 
-	result := reg.FindAllSubmatch([]byte(keys), -1)
+	result := reg.FindAllString(keys, -1)
 	for _, matches := range result {
-		for _, v := range matches {
-			fmt.Println(string(v))
-		}
+		fmt.Println(matches)
 		fmt.Println()
 	}
 
