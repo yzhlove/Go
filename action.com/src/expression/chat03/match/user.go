@@ -17,9 +17,9 @@ func init() {
 func (matcher *UserMatcher) Express(key string) error {
 
 	if !userRegex.MatchString(key) {
-		return fmt.Errorf("[ERROR] 没有匹配到 %v \n", key)
+		return fmt.Errorf("[ERROR][USER] 没有匹配到 %v \n", key)
 	}
 	keyList := userRegex.FindAllString(key, -1)
-	fmt.Println(keyList)
+	fmt.Println("[USER] ", keyList)
 	return nil
 }

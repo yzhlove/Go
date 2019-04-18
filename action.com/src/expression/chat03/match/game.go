@@ -16,9 +16,9 @@ func init() {
 
 func (matcher *GameMatcher) Express(key string) error {
 	if !gameRegex.MatchString(key) {
-		return fmt.Errorf("[ERROR] 没有匹配到 %v \n", key)
+		return fmt.Errorf("[ERROR][GAME] 没有匹配到 %v \n", key)
 	}
 	keyList := gameRegex.FindAllString(key, -1)
-	fmt.Println(keyList)
+	fmt.Println("[GAME] ", keyList)
 	return nil
 }

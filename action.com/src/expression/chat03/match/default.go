@@ -12,6 +12,5 @@ func init() {
 }
 
 func (matcher *DefaultMatcher) Express(key string) error {
-	fmt.Println("DEFAULT KEY : ", key)
-	return nil
+	return fmt.Errorf("[ERROR][DEFAULT] 没有匹配到 %v \n", key)
 }
