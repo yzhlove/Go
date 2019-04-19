@@ -1,9 +1,17 @@
 package obj
 
-import "fmt"
+import (
+	"fmt"
+)
+
+var UserList = make(map[string]User)
 
 type User interface {
 	UserInfo()
+	Value
+}
+
+type Value interface {
 	InitValue(info *BaseInfo)
 }
 
@@ -35,4 +43,9 @@ type Teacher struct {
 
 func (teacher *Teacher) UserInfo() {
 	fmt.Println("Teacher Info : ", teacher)
+}
+
+func Init() {
+	UserList["STU"] = &Student{BaseInfo: new(BaseInfo)}
+	UserList["TEH"] = &Teacher{BaseInfo: new(BaseInfo)}
 }
