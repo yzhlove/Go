@@ -19,10 +19,12 @@ var (
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	pool := GetPool()
-	count := 30
+	c := pool.Get()
+	defer c.Close()
+	count := 1000
 	wg.Add(count)
 	for i := 0; i < count; i++ {
-		go Run(i, pool, wg)
+		go Run(i, c, wg)
 	}
 
 	wg.Wait()
@@ -31,7 +33,7 @@ func main() {
 
 func GetPool() *redis.Pool {
 	return &redis.Pool{
-		MaxIdle:     1,
+		MaxIdle:     2,
 		IdleTimeout: time.Duration(2 * time.Second),
 		Dial: func() (conn redis.Conn, e error) {
 			return redis.Dial("tcp", "127.0.0.1:6379", redis.DialDatabase(0), redis.DialConnectTimeout(time.Duration(2*time.Second)))
@@ -39,18 +41,17 @@ func GetPool() *redis.Pool {
 	}
 }
 
-func Run(id int, pool *redis.Pool, wg *sync.WaitGroup) {
+func Run(id int, c redis.Conn, wg *sync.WaitGroup) {
 	defer wg.Done()
-	c := pool.Get()
-	defer c.Close()
-
-	ts := rand.Intn(5) + 3
-	fmt.Println("[INFO] before time ", ts)
-	time.Sleep(time.Duration(ts) * time.Second)
+	//c := pool.Get()
+	//defer c.Close()
 	if err := ping(c); err != nil {
 		log.Printf("[ERROR] ping err : %v \n", err)
 		return
 	}
+	ts := rand.Intn(5) + 3
+	fmt.Println("[INFO] before time ", ts)
+	time.Sleep(time.Duration(ts) * time.Second)
 	fmt.Printf("[%v] successful .\n", id)
 }
 
