@@ -11,12 +11,12 @@ import (
 )
 
 const (
-	count  = 50
+	count  = 20
 	number = 5
 )
 
 func main() {
-
+	rand.Seed(time.Now().UnixNano())
 	wg := new(sync.WaitGroup)
 	wg.Add(count)
 	p, err := pool.New(conn.New, number)
@@ -25,7 +25,7 @@ func main() {
 	}
 	defer p.Close()
 	for i := 0; i < count; i++ {
-		time.Sleep(time.Duration(rand.Intn(5)) * time.Millisecond)
+		time.Sleep(time.Duration(rand.Intn(5)) * time.Second)
 		go func(id int) {
 			defer wg.Done()
 			backup(id, p)
@@ -42,6 +42,7 @@ func backup(id int, p *pool.Pool) {
 		return
 	}
 	defer p.Back(c)
-	time.Sleep(5 * time.Second)
+	log.Printf("[INFO] %v Start .", c.(*conn.Conn).ID)
+	time.Sleep(time.Duration(rand.Intn(10)+5) * time.Second)
 	log.Printf("[INFO] %v Done .", c.(*conn.Conn).ID)
 }

@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrPoolClosed = errors.New("connection must closed")
+	ErrPoolGet    = errors.New("time out")
 )
 
 type Function func() (io.Closer, error)
@@ -24,10 +25,16 @@ func New(factory Function, size uint) (*Pool, error) {
 	if size <= 0 {
 		return nil, fmt.Errorf("size must > 0")
 	}
-	return &Pool{
+	p := &Pool{
 		factory:  factory,
 		resource: make(chan io.Closer, size),
-	}, nil
+	}
+	//初始化连接池
+	for i := 0; i < int(size); i++ {
+		res, _ := p.factory()
+		p.resource <- res
+	}
+	return p, nil
 }
 
 func (p *Pool) Get() (io.Closer, error) {
@@ -38,7 +45,7 @@ func (p *Pool) Get() (io.Closer, error) {
 		}
 		return res, nil
 	default:
-		return p.factory()
+		return nil, ErrPoolGet
 	}
 }
 
