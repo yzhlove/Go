@@ -30,6 +30,7 @@ func main() {
 			fmt.Println("ERROR")
 			break
 		}
+
 		if count%24 == 0 {
 			if count == 0 {
 				fmt.Print("[")
