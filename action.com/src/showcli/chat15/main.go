@@ -44,13 +44,46 @@ func main() {
 		fmt.Println(v)
 	}
 
-	fmt.Println("Done .")
+	fmt.Println("-------------------------------")
 
+	tf, err := os.Create("tempBytes.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer tf.Close()
+	//移动文件指针
+	_, _ = file.Seek(0, 0)
+	var (
+		data []byte
+		n    int
+	)
+	var countIndex int
+	for i := 0; i < len(lines); i++ {
+		tmp := lines[i]
+		data, n, err = readIndex(file, tmp.Index+tmp.Length-countIndex+1)
+		_, _ = tf.Write(data)
+		countIndex += n
+		fmt.Printf("countIndex = %v line:%v read:\n[%v] \n", countIndex, tmp, string(data))
+	}
+	data, n, err = readIndex(file, 128)
+	fmt.Println("last n = ", n)
+	_, _ = tf.Write(data)
+	fmt.Println("Done .")
 }
 
 type Line struct {
 	Index  int
 	Length int
+}
+
+func readIndex(file *os.File, byteLength int) ([]byte, int, error) {
+	buf := make([]byte, byteLength)
+	var n int
+	var err error
+	if n, err = io.ReadFull(file, buf); err != nil {
+		return nil, 0, errors.New("EOF")
+	}
+	return buf, n, nil
 }
 
 func readByte(file *os.File) ([]byte, error) {

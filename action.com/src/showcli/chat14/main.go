@@ -13,11 +13,12 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	buf := make([]byte, 5)
-	_, _ = io.ReadFull(file, buf)
+	buf := make([]byte, 1024)
+	n, _ := io.ReadFull(file, buf)
+	fmt.Println("n = ", n)
 	fmt.Println(string(buf))
 
-	_, _ = io.ReadFull(file, buf)
-	fmt.Println(string(buf))
+	//_, _ = io.ReadFull(file, buf)
+	//fmt.Println(string(buf))
 
 }
