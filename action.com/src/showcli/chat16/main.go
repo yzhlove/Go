@@ -36,6 +36,27 @@ func main() {
 
 }
 
+func BackupLine(sf *os.File, lines []Line) {
+	bf, err := os.Create("backupBytes.txt")
+	if err != nil {
+		panic(err)
+	}
+	defer bf.Close()
+	indexMap := make(map[int]int)
+	for i := 0; i < len(lines); i++ {
+		indexMap[lines[i].Index] = lines[i].Count
+	}
+	buf := make([]byte, 10)
+	for i := 0; i < len(lines); i++ {
+		_, err = io.ReadFull(sf, buf)
+		if err != nil {
+			fmt.Println("Err:", err)
+			break
+		}
+	}
+
+}
+
 func GetLines(path string) []Line {
 	var (
 		lines        []Line
