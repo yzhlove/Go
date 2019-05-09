@@ -18,7 +18,7 @@ func main() {
 				}
 				time.Sleep(time.Second * 5)
 			}
-			fmt.Println(i, "->cancel")
+			fmt.Println("->", i, "->cancel")
 		}(i, temp)
 	}
 
@@ -26,19 +26,22 @@ func main() {
 	//time.Sleep(1 * time.Second)
 
 	cancel1(temp)
-	time.Sleep(1 * time.Second)
+	time.Sleep(2 * time.Second)
 }
 
 func IsCancel(c chan struct{}) bool {
 	select {
 	case <-c:
+		fmt.Println(1)
 		return true
 	default:
+		fmt.Println(2)
 		return false
 	}
 }
 
 func cancel1(c chan struct{}) {
+	time.Sleep(time.Second)
 	c <- struct{}{}
 }
 
