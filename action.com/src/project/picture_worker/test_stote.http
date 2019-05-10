@@ -1,0 +1,20 @@
+POST http://localhost:1234/set?key=love&value=xjj
+Content-Type: application/x-www-form-urlencoded
+
+
+
+###
+GET http://localhost:1234/list?#
+
+###
+GET http://localhost:1234/get?key=love
+
+###
+POST http://localhost:1234/set?key=like&value=xyj
+Content-Type: application/x-www-form-urlencoded
+
+###
+DELETE http://localhost:1234/remove?key=like
+Content-Type: application/x-www-form-urlencoded
+
+###

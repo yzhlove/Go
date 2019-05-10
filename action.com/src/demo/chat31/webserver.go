@@ -4,6 +4,7 @@ import (
 	"demo/chat31/handler"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 )
 

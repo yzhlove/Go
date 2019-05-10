@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package protc;
+
+message UpperReq {
+    string name = 1;
+}
+
+message UpperResp {
+    string message = 1;
+}
+
+service ToUpper {
+    rpc Upper(UpperReq) returns (UpperResp) {}
+}
