@@ -26,7 +26,7 @@ func main() {
 		panic(err)
 	}
 
-	userBytes = []byte{}
+	//userBytes = []byte{}
 
 	temp := &Temp{}
 
@@ -36,4 +36,8 @@ func main() {
 
 	fmt.Println(temp)
 
+	var a []int
+	fmt.Printf("%T %v %v \n", a, a, len(a))
+	a = nil
+	fmt.Printf("%T %v %v \n", a, a, len(a))
 }
