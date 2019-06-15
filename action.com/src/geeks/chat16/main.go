@@ -17,8 +17,15 @@ func main() {
 
 	fmt.Println("a = ", a)
 	fmt.Println("b = ", b)
-	b[3] = 7
+
+	a = append(a, 6)
+	fmt.Printf("%p - %v - %v \n", a, len(a), cap(a))
+	fmt.Printf("%p - %v - %v \n", b, len(b), cap(b))
+
 	fmt.Println("a = ", a)
 	fmt.Println("b = ", b)
+	//b[3] = 7
+	//fmt.Println("a = ", a)
+	//fmt.Println("b = ", b)
 
 }
