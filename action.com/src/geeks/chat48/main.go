@@ -10,7 +10,7 @@ func main() {
 		stream := make(chan interface{})
 		go func() {
 			defer close(stream)
-			for it := range values {
+			for _, it := range values {
 				select {
 				case stream <- it:
 				case <-done:
@@ -38,7 +38,7 @@ func main() {
 
 	done := make(chan struct{})
 	for num := range take(done, repeat(done, 1), 5) {
-		fmt.Printf("num = %v \n", num)
+		fmt.Printf("num =%T %v \n", num, num)
 	}
 	close(done)
 	fmt.Println("Done .")
