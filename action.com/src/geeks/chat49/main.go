@@ -12,7 +12,7 @@ func main() {
 		go func() {
 			defer close(stream)
 			select {
-			case stream <- fn:
+			case stream <- fn():
 			case <-done:
 				return
 			}
@@ -41,9 +41,7 @@ func main() {
 	}), 10) {
 
 		if ch, ok := num.(<-chan interface{}); ok {
-			if fn, ok := (<-ch).(func() interface{}); ok {
-				fmt.Printf("num = %v |\n", fn())
-			}
+			fmt.Printf("ch = %T %v \n", ch, <-ch)
 		}
 
 	}
