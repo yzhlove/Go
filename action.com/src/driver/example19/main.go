@@ -11,11 +11,12 @@ import (
 func main() {
 	pool := NewRedisPool()
 	c := pool.Get()
-	key := "zset_key:1"
+
+	key := "User_Equipments:{1135436627158503425}"
 	//_, _ = c.Do("ZADD", key, "5", "e", "6", "f", "7", "g", "8", "h")
-	var result map[string]int64
+	var result []string
 	var err error
-	if result, err = redis.Int64Map(c.Do("ZRANGE", key, 0, -1, "WITHSCORES")); err != nil {
+	if result, err = redis.Strings(c.Do("SMEMBERS", key)); err != nil {
 		panic(err)
 	}
 	for index, value := range result {
